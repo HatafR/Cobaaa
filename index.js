@@ -33,6 +33,10 @@ app.get('/say/:greeting', (req, res) => {
     res.send(greeting);
 });
 
+app.get('/unauthorized', (req, res) => {
+  res.status(401).send('Not Authorized');
+});
+
 
 app.use((req, res, next) => {
   console.log(`Request ${req.path} - harus lewat sini`);
