@@ -19,6 +19,15 @@ res.send('Fatah Rizqi | Lionel Messi Champion Of The World!');
 //     res.send("OK");
 // });
 
+ app.get('/messi', (req, res) =>{
+res.send('Argentina Champion Of The World!');
+});
+
+app.get('/bilang/:hoga', (req, res) => {
+    const { hoga } = req.params;
+    res.send(hoga + "Amazing");
+});
+
 app.get('/say/:greeting', (req, res) => {
     const { greeting } = req.params;
     res.send(greeting);
