@@ -33,8 +33,8 @@ app.get('/say/:greeting', (req, res) => {
     res.send(greeting);
 });
 
-app.get('/unauthorized', (req, res) => {
-  res.status(401).send('Not Authorized');
+app.get('/gabisa', (req, res) => {
+  res.status(401).send('gabisa nih');
 });
 
 
