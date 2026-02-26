@@ -65,7 +65,6 @@ app.use(express.json());
 
 app.use("/notes", notesRouter);
 
-app.use(cors());
 
 app.use((err, req, res, next) =>{
   res.send('Error Occurred');
