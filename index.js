@@ -2,6 +2,7 @@ import express from "express";
 import notesRouter from "./routes/notes.js";
 import mongoose from 'mongoose';
 import { Post } from './models/index.js';
+import cors from "cors";
 
 const app = express()
 const mongoURI = 'mongodb+srv://rizzfatah_db_user:dbMonggo@cluster0.wb0yarb.mongodb.net/mydb?retryWrites=true&w=majority&appName=Cluster0';
@@ -23,6 +24,8 @@ mongoose.connect(mongoURI)
   .catch((err) => {
     console.error('❌ Gagal koneksi ke MongoDB:', err);
   });
+
+app.use(cors({origin:"*"}));
 
 app.use((req, res, next) => {
 
