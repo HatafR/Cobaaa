@@ -74,26 +74,61 @@ router.post("/", async (req, res) => {
   res.status(201).json(newNote);
 });
 
-//put
-router.put("/:id", (req, res) => {
-  const updated = update(Number(req.params.id), req.body);
+//put 
+// router.put("/:id", (req, res) => {
+//   const updated = update(Number(req.params.id), req.body);
 
-  if (!updated) {
-    return res.status(404).json({ message: "Note not found" });
+//   if (!updated) {
+//     return res.status(404).json({ message: "Note not found" });
+//   }
+
+//   res.json(updated);
+// });
+
+// Put Mongoose
+router.put("/:id", async (req, res) => {
+   const {id} = req.params;
+    const {title, content} = req.body;
+  try {
+    const updated = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });       
+    if (!updated) {
+      return res.status(404).json({ message: "Catatan tidak ditemukan" });
+    }
+    res.json({
+      message: "Berhasil update catatan!",
+      data: updated
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Gagal memperbarui data: " + error.message });
   }
-
-  res.json(updated);
 });
 
 // //delete
-router.delete("/:id", (req, res) => {
-  const success = remove(Number(req.params.id));
+// router.delete("/:id", (req, res) => {
+//   const success = remove(Number(req.params.id));
 
-  if (!success) {
-    return res.status(404).json({ message: "Note not found" });
+//   if (!success) {
+//     return res.status(404).json({ message: "Note not found" });
+//   }
+
+//   res.json({ message: "Note deleted" });
+// });
+
+//delete mongodb
+router.delete("/:id", async (req, res) => {
+  try {
+    const deleted = await Post.findByIdAndDelete(req.params.id);
+    if (!deleted) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+
+    res.json({ 
+      message: "Note deleted successfully",
+      deletedData: deleted 
+    });
+  } catch (error) {
+    res.status(500).json({ error: "Gagal menghapus data: " + error.message });
   }
-
-  res.json({ message: "Note deleted" });
 });
 
 export default router;
