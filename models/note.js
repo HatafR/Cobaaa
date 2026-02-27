@@ -10,7 +10,7 @@ let nextId = 2;
 
 // GET ALL
 export function list() {
-  return notes.map(({ id, title }) => ({ id, title }));
+  return notes.map(({ id, title, author }) => ({ id, title, author }));
 }
 
 // GET BY ID
@@ -19,23 +19,25 @@ export function getById(id) {
 }
 
 // CREATE
-export function create({ title, content }) {
+export function create({ title, content, author }) {
   const newNote = {
     id: nextId++,
     title,
-    content
+    content,
+    author
   };
   notes.push(newNote);
   return newNote;
 }
 
 // UPDATE
-export function update(id, { title, content }) {
+export function update(id, { title, content, author }) {
   const note = notes.find(n => n.id === id);
   if (!note) return null;
 
   note.title = title ?? note.title;
   note.content = content ?? note.content;
+  note.author = author ?? note.author;
 
   return note;
 }

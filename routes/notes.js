@@ -66,11 +66,11 @@ router.get("/:id", async (req, res) => {
 // });
 
 router.post("/", async (req, res) => {
-  const { title, content } = req.body;
-  if (!title || !content) {
+  const { title, content, author } = req.body;
+  if (!title || !content || !author) {
     return res.status(400).json({ error: 'Title and content are required' });
   }
-  const newNote = await Post.create({ title : title, content : content });
+  const newNote = await Post.create({ title : title, content : content, author : author });
   res.status(201).json(newNote);
 });
 
@@ -87,8 +87,8 @@ router.post("/", async (req, res) => {
 
 // Put Mongoose
 router.put("/:id", async (req, res) => {
-   const {id} = req.params;
-    const {title, content} = req.body;
+  const {id} = req.params;
+  const {title, content, author} = req.body;
   try {
     const updated = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });       
     if (!updated) {
