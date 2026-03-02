@@ -14,7 +14,7 @@ import crypto from 'crypto';
 const app = express();
 const mongoURI = 'mongodb+srv://rizzfatah_db_user:dbMonggo@cluster0.wb0yarb.mongodb.net/mydb?retryWrites=true&w=majority&appName=Cluster0';
 
-// 1. MIDDLEWARE DASAR
+// 1. MIDDLEWARE Dasar
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
 app.use(cors({ origin: "*" }));
