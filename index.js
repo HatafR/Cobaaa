@@ -52,7 +52,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, async (email, passwor
 passport.serializeUser((user, callback) => callback(null, user));
 passport.deserializeUser((obj, callback) => callback(null, obj));
 
-// 5. KONEKSI MONGODB
+// 5. Koneksi MongoDB
 mongoose.connect(mongoURI)
   .then(() => console.log('✅ Berhasil terhubung ke MongoDB'))
   .catch((err) => console.error('❌ Gagal koneksi ke MongoDB:', err));
@@ -61,7 +61,8 @@ mongoose.connect(mongoURI)
 app.use('/auth', authRouter); 
 
 app.post('/login', passport.authenticate('local'), (req, res) => {
-    res.send("Login Berhasil! Selamat datang " + req.user.name);
+  res.json({ message: "Login Berhasil!", user: req.user });
+    // res.send("Login Berhasil! Selamat datang " + req.user.name);
 });
 
 app.get('/logout', (req, res) => {
@@ -99,5 +100,6 @@ app.use((err, req, res, next) => {
 app.listen(3000, () => {
     console.log("🚀 Server running on http://localhost:3000");
 });
+
 
 export default app;
