@@ -10,6 +10,7 @@ import authRouter from './routes/auth.js';
 import { Strategy as LocalStrategy } from 'passport-local';
 import User from './models/schemas/user.js'; 
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 
 const app = express();
 const mongoURI = 'mongodb+srv://rizzfatah_db_user:dbMonggo@cluster0.wb0yarb.mongodb.net/mydb?retryWrites=true&w=majority&appName=Cluster0';
@@ -80,7 +81,8 @@ function loginRequired(req, res, next) {
     next();
 }
 
-app.use("/notes", loginRequired, notesRouter);
+// app.use("/notes", loginRequired, notesRouter);
+app.use("/notes", notesRouter);
 
 app.get('/', (req, res) => res.send('Fatah Rizqi | Lionel Messi Champion Of The World!'));
 
