@@ -1,6 +1,5 @@
 // import { Post } from './models/index.js';
 // import session from 'express-session';
-
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -63,6 +62,7 @@ passport.use(
     }
   )
 );
+
 
 // 5. JWT STRATEGY (Versi Cookie)
 const cookieExtractor = (req) => {
