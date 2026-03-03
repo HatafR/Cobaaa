@@ -1,5 +1,6 @@
 // import { Post } from './models/index.js';
 // import session from 'express-session';
+
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -17,27 +18,36 @@ import { Strategy as JwtStrategy } from "passport-jwt";
 
 const app = express();
 const JWT_SECRET = "SECRET_JWT_KEY";
+
 const mongoURI =
   "mongodb+srv://rizzfatah_db_user:dbMonggo@cluster0.wb0yarb.mongodb.net/mydb?retryWrites=true&w=majority&appName=Cluster0";
 
-// 1. Middleware
+/* 1. MIDDLEWARE */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors({ origin: "*" }));
 
-// 2. SESSION CONFIG
+
+/* 2. SESSION CONFIG (TIDAK DIPAKAI - REFERENSI) */
+
 // app.use(session({
-//     secret: 'secret_cobaaa', 
+//     secret: 'secret_cobaaa',
 //     resave: false,
 //     saveUninitialized: false
 // }));
 
-// 3. PASSPORT INIT
+
+/* 3. PASSPORT INIT */
+
+
 app.use(passport.initialize());
 // app.use(passport.session()); // Tidak dipakai karena tidak pakai session
 
-// 4. LOCAL STRATEGY (LOGIN)
+
+/* 4. LOCAL STRATEGY (LOGIN SHA256) */
+
+
 passport.use(
   new LocalStrategy(
     { usernameField: "email" },
@@ -64,44 +74,61 @@ passport.use(
 );
 
 
-// 5. JWT STRATEGY (Versi Cookie)
-const cookieExtractor = (req) => {
-  let token = null;
-  if (req && req.cookies) {
-    token = req.cookies["token"];
-  }
-  return token;
-};
+/* 5. JWT STRATEGY (VERSI COOKIE - DIKOMEN) */
 
-passport.use(
-  new JwtStrategy(
-    {
-      jwtFromRequest: cookieExtractor,
-      secretOrKey: JWT_SECRET,
-    },
-    (payload, done) => {
-      return done(null, payload);
-    }
-  )
-);
 
-// 6. GLOBAL JWT AUTO LOGIN 
-app.use((req, res, next) => {
-  if (!req.cookies.token) {
-    return next();
-  }
-  passport.authenticate("jwt", { session: false })(req, res, next);
-});
+// const cookieExtractor = (req) => {
+//   let token = null;
+//   if (req && req.cookies) {
+//     token = req.cookies["token"];
+//   }
+//   return token;
+// };
 
-// 7. CONNECT MONGODB
-mongoose.connect(mongoURI)
+// passport.use(
+//   new JwtStrategy(
+//     {
+//       jwtFromRequest: cookieExtractor,
+//       secretOrKey: JWT_SECRET,
+//     },
+//     (payload, done) => {
+//       return done(null, payload);
+//     }
+//   )
+// );
+
+
+/* 6. GLOBAL JWT AUTO LOGIN (COOKIE VERSION - DIKOMEN) */
+
+
+// app.use((req, res, next) => {
+//   if (!req.cookies.token) {
+//     return next();
+//   }
+//   passport.authenticate("jwt", { session: false })(req, res, next);
+// });
+
+
+/* 7. CONNECT MONGODB */
+
+
+mongoose
+  .connect(mongoURI)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("❌ Mongo Error:", err));
 
-// 8. ROUTES
+
+/* 8. ROUTES */
+
+
 app.use("/auth", authRouter);
-// LOGIN → SAVE JWT IN COOKIE
-app.post("/login",  passport.authenticate("local", { session: false }),  (req, res) => {
+
+/* ================= LOGIN ================= */
+
+app.post(
+  "/login",
+  passport.authenticate("local", { session: false }),
+  (req, res) => {
     const payload = {
       id: req.user._id,
       email: req.user.email,
@@ -112,70 +139,78 @@ app.post("/login",  passport.authenticate("local", { session: false }),  (req, r
       expiresIn: "1h",
     });
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      maxAge: 60 * 60 * 1000,
-    });
+    // ================= VERSION COOKIE (DIKOMEN) =================
+    // res.cookie("token", token, {
+    //   httpOnly: true,
+    //   maxAge: 60 * 60 * 1000,
+    // });
 
-    res.json({ message: "Login successful (JWT saved in cookie)" });
+    // ================= VERSION HEADER (ACTIVE) =================
+    res.json({
+      message: "Login berhasil",
+      token: token,
+    });
   }
 );
 
-// LOGOUT JWT VERSION
+/* ================= LOGOUT ================= */
+
+// Cookie version (dikomen)
+// app.get("/logout", (req, res) => {
+//   res.cookie("token", null, { maxAge: 0 });
+//   res.json({ message: "Logged out successfully" });
+// });
+
+// Header version (aktif)
 app.get("/logout", (req, res) => {
-  res.cookie("token", null, { maxAge: 0 });
-  res.json({ message: "Logged out successfully" });
+  res.json({
+    message: "Logout berhasil (hapus token di frontend)",
+  });
 });
 
 
-// SESSION LOGOUT VERSION (TIDAK DIPAKAI - REFERENSI)
+/* 9. JWT REQUIRED (HEADER VERSION AKTIF) */
 
-// app.get('/logout', (req, res) => {
-//     req.logout((err) => {
-//         if (err) return next(err);
-//         res.redirect('/');
-//     });
-// });
 
-// PROTECT NOTES ROUTE (JWT REQUIRED)
 function jwtRequired(req, res, next) {
-  if (!req.user) {
-    return res.status(401).json({ message: "Login required" });
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader) {
+    return res.status(401).json({ message: "Token tidak ada" });
   }
-  next();
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (err) {
+    return res.status(401).json({ message: "Token tidak valid" });
+  }
 }
 
-// Versi Header
-// function jwtRequired(req, res, next) {
-//   const authHeader = req.headers.authorization;
-//   if (!authHeader) {
-//     return res.status(401).json({ message: "Token tidak ada" });
-//   }
-//
-//   const token = authHeader.split(" ")[1];
-//
-//   try {
-//     const decoded = jwt.verify(token, JWT_SECRET);
-//     req.user = decoded;
-//     next();
-//   } catch (err) {
-//     return res.status(401).json({ message: "Token tidak valid" });
-//   }
-// }
+
+/* 10. PROTECT NOTES ROUTE */
 
 
-// Protect Notes
 app.use("/notes", jwtRequired, notesRouter);
 
 // app.use("/notes", notesRouter); // versi tanpa proteksi (referensi)
 // app.use("/notes", loginRequired, notesRouter); // session version (referensi)
 
-// ROUTE Awal
+
+/* 11. ROOT ROUTE */
+
+
 app.get("/", (req, res) =>
   res.send("Fatah Rizqi | Lionel Messi Champion Of The World!")
 );
 
-// ERROR HANDLING
+
+/* 12. ERROR HANDLING */
+
+
 app.use((req, res) => {
   res.status(404).send("Maaf, halaman tidak ditemukan!");
 });
@@ -185,7 +220,10 @@ app.use((err, req, res, next) => {
   res.status(500).send("Terjadi Kesalahan Server: " + err.message);
 });
 
-// LISTEN
+
+/* 13. LISTEN */
+
+
 app.listen(3000, () => {
   console.log("🚀 Server running on http://localhost:3000");
 });
