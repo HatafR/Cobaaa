@@ -1,20 +1,22 @@
 import nodemailer from "nodemailer";
+import dotenv from "dotenv";
+dotenv.config({ path: "./.env" });
+
+console.log("ENV Cek Masuk");
 
 const transporter = nodemailer.createTransport({
   service: "Gmail",
   auth: {
-    user: "rizz.fatah@gmail.com",
-    pass: "jgua howu qklp dwgx",
+    user: process.env.GMAIL_USER,
+    pass: process.env.GMAIL_PASS,
   },
 });
 
 export async function sendEmail(to, subject, text) {
-  const mailOptions = {
-    from: "rizz.fatah@gmail.com",
+  return transporter.sendMail({
+    from: process.env.GMAIL_USER,
     to,
     subject,
     text,
-  };
-
-  return transporter.sendMail(mailOptions);
+  });
 }

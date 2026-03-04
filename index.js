@@ -1,10 +1,12 @@
 // import { Post } from './models/index.js';
 // import session from 'express-session';
+import dotenv from "dotenv";
+dotenv.config({ path: "./.env" });
+
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import passport from "passport";
-// import cookieParser from "cookie-parser";
 import crypto from "crypto";
 import jwt from "jsonwebtoken";
 
@@ -16,7 +18,8 @@ import { Strategy as LocalStrategy } from "passport-local";
 // import { Strategy as JwtStrategy } from "passport-jwt";
 
 const app = express();
-const JWT_SECRET = "SECRET_JWT_KEY";
+const JWT_SECRET = process.env.JWT_SECRET;
+
 
 const mongoURI =
   "mongodb+srv://rizzfatah_db_user:dbMonggo@cluster0.wb0yarb.mongodb.net/mydb?retryWrites=true&w=majority&appName=Cluster0";

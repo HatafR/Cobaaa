@@ -22,10 +22,10 @@ router.post('/register', async (req, res) => {
     }
 });
 
-function generateRandomPassword() {
+function generateRandomPassword() { 
   return Math.floor(Math.random() * 100000000)
-    .toString()
-    .padStart(8, "0");
+    .toString() 
+    .padStart(8, "0"); 
 }
 
 router.post('/reset-password', async (req, res) => {
@@ -34,7 +34,7 @@ router.post('/reset-password', async (req, res) => {
     try {
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(400).send('Email tidak ditemukan');
+            return res.status(400).send('Email tidak ditemukan'); 
         }
 
         const newPassword = generateRandomPassword();

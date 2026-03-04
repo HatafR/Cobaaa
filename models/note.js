@@ -33,9 +33,9 @@ export function create({ title, content, author }) {
 // UPDATE
 export function update(id, { title, content, author }) {
   const note = notes.find(n => n.id === id);
-  if (!note) return null;
+  if (!note) return null; 
 
-  note.title = title ?? note.title;
+  note.title = title ?? note.title; 
   note.content = content ?? note.content;
   note.author = author ?? note.author;
 
