@@ -1,7 +1,7 @@
 import express from 'express';
 import crypto from 'crypto';
 import User from '../models/schemas/user.js';
-import { sendEmail } from '../services/mailservices.js';
+import { sendEmail } from '../services/mailServices.js';
 
 const router = express.Router();
 
