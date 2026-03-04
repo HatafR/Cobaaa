@@ -1,10 +1,18 @@
 import midtransClient from "midtrans-client";
 
-const snap = new midtransClient.Snap({
-  isProduction: process.env.MIDTRANS_IS_PRODUCTION === "true",
+const isProduction = process.env.MIDTRANS_IS_PRODUCTION === "true";
+
+export const snap = new midtransClient.Snap({
+  isProduction,
   serverKey: process.env.MIDTRANS_SERVER_KEY,
 });
 
+export const coreApi = new midtransClient.CoreApi({
+  isProduction,
+  serverKey: process.env.MIDTRANS_SERVER_KEY,
+});
+
+// CREATE SNAP
 export async function createSnapTransaction(order) {
   const parameter = {
     transaction_details: {
@@ -18,4 +26,9 @@ export async function createSnapTransaction(order) {
   };
 
   return await snap.createTransaction(parameter);
+}
+
+// CHECK STATUS
+export async function checkTransactionStatus(orderId) {
+  return await coreApi.transaction.status(orderId);
 }

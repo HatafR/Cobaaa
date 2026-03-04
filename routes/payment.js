@@ -1,6 +1,7 @@
 import express from "express";
 import Order from "../models/order.js";
 import { createSnapTransaction } from "../services/midtransService.js";
+import { checkTransactionStatus } from "../services/midtransService.js";
 
 const router = express.Router();
 
@@ -28,6 +29,30 @@ router.post("/", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Payment error" });
+  }
+});
+
+// CHECK STATUS
+router.get("/status/:orderId", async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    const statusResponse = await checkTransactionStatus(orderId);
+
+    // Update status ke DB
+    await Order.findByIdAndUpdate(orderId, {
+      status: statusResponse.transaction_status,
+    });
+
+    res.json({
+      orderId,
+      status: statusResponse.transaction_status,
+      raw: statusResponse,
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to check status" });
   }
 });
 
