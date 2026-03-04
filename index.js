@@ -13,6 +13,7 @@ import jwt from "jsonwebtoken";
 import notesRouter from "./routes/notes.js";
 import authRouter from "./routes/auth.js";
 import User from "./models/schemas/user.js";
+import paymentRouter from "./routes/payment.js";
 
 import { Strategy as LocalStrategy } from "passport-local";
 // import { Strategy as JwtStrategy } from "passport-jwt";
@@ -131,6 +132,7 @@ function jwtRequired(req, res, next) {
 
 // PROTECT NOTES ROUTE 
 app.use("/notes", jwtRequired, notesRouter);
+app.use("/payment", paymentRouter);
 
 // app.use("/notes", notesRouter); // versi tanpa proteksi (referensi)
 // app.use("/notes", loginRequired, notesRouter); // session version (referensi)
