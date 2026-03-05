@@ -2,6 +2,7 @@ import express from "express";
 import Order from "../models/order.js";
 import { createSnapTransaction } from "../services/midtransService.js";
 import { checkTransactionStatus } from "../services/midtransService.js";
+import { handleNotification } from "../services/midtransService.js";
 
 const router = express.Router();
 
@@ -55,5 +56,7 @@ router.get("/status/:orderId", async (req, res) => {
     res.status(500).json({ message: "Failed to check status" });
   }
 });
+
+router.post("/notification", handleNotification);
 
 export default router;
