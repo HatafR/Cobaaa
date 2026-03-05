@@ -53,6 +53,10 @@ export async function handleNotification(req, res) {
     const fraudStatus = statusResponse.fraud_status;
     const paymentType = statusResponse.payment_type;
 
+    console.log("Order ID:", orderId);
+    console.log("Transaction Status:", transactionStatus);
+    console.log("Payment Type:", paymentType);
+    
     console.log("Midtrans Notification:", statusResponse);
 
     let orderStatus = "pending";
